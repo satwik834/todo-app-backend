@@ -1,15 +1,16 @@
  
- import db from "../database";
+ import db from "../database.js";
 
 
- async function createUser(username,email,passwordHash){
+ export async function createUser(username,email,passwordHash){
     try{
         const res = await db.query(
-            `INSERT INTO users(username,email,passwordHash)
-             VALUES($1,$2,$3)
+            `INSERT INTO users(username,email,password)
+             VALUES($1,$2,$3) RETURNING id,username,email
              `,
             [username, email, passwordHash]            
         );
+        return res.rows;
     }catch(err){
         console.log("error while creating user",err.message);
     }
@@ -17,21 +18,23 @@
 
  //get by email
 
- async function getUserByEmail(email){
+ export async function getUserByEmail(email){
     try{
         const res = await db.query(
             `SELECT * FROM users WHERE email = $1`,[email]
         );
+        return res.rows
     }catch(err){
         console.log("error while getting user by email",err.message)
     }
  }
  //get by id
- async function getUserById(id){
+ export async function getUserById(id){
     try{
         const res = await db.query(
             `SELECT * FROM users WHERE id = $1`,[id]
         );
+        return res.rows
     }catch(err){
         console.log("error while getting user by id",err.message)
     }
@@ -47,4 +50,3 @@
     }
 }
 
- export default { createUser, getUserById, getAllUsers }

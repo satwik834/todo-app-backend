@@ -1,10 +1,15 @@
-const express = require('express')
+import express from 'express';
+import passport from 'passport';
+import { createUser, logoutUser } from '../controllers/userController.js';
+
 
 const router = express()
 
 
-router.get('/',(req,res) => {
-    res.send('this is a fucking test route');
-})
+router.post('/register', createUser);
+router.post('/login', passport.authenticate('local'), (req, res) => {
+    res.json({ message: 'Logged in', user: req.user });
+});
+router.post('/logout', logoutUser);
 
-module.exports = router
+export default router
